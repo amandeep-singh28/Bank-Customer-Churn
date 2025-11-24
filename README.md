@@ -1,6 +1,6 @@
 # 💼📉 Bank-Customer-Churn-Prediction-and-ML-Model-Comparison
 
-A complete customer churn analytics & prediction project built using **Python, Scikit-Learn, and XGBoost**, applying advanced ML techniques to forecast churn in the banking sector. Includes rigorous testing of multiple models, imbalance handling, real metrics evaluation (ROC-AUC / PR-AUC), and a future-ready Streamlit interface for real-time prediction.
+A complete customer churn analytics & prediction project built using **Python, Scikit-Learn, and XGBoost**, applying advanced ML techniques to forecast churn in the banking sector. Includes rigorous testing of multiple models, imbalance handling, real metrics evaluation (ROC-AUC / PR-AUC), and strong recall optimization for churn prediction.
 
 ---
 
@@ -8,12 +8,12 @@ A complete customer churn analytics & prediction project built using **Python, S
 
 This project follows an industry-standard ML pipeline:
 
-- **Python (Pandas / Numpy)**: Data cleaning & preprocessing  
-- **EDA**: Customer behaviour analysis  
-- **Imbalance Handling**: SMOTE, ADASYN, Undersampling, Class Weights  
-- **Model Training**: 6 different ML algorithms tested  
-- **Model Evaluation**: ROC-AUC, PR-AUC, Recall-oriented assessment  
-- **Deployment Prep**: Streamlit app for interactive churn predictions  
+- **Python (Pandas / Numpy)** → Data cleaning & preprocessing  
+- **EDA** → Customer behaviour & churn insights  
+- **Imbalance Handling** → SMOTE, ADASYN, Undersampling, Class Weights  
+- **Model Training** → Trained 6 different ML algorithms + sampling variants  
+- **Model Evaluation** → Recall, F1, ROC-AUC, PR-AUC metrics  
+- **Final Model Selection** → XGBoost with highest churn detection capability  
 
 ---
 
@@ -21,41 +21,42 @@ This project follows an industry-standard ML pipeline:
 
 ### 🔧 **Key Cleaning Operations**
 - Removed duplicates  
-- Filled missing values  
-- Label encoding & one-hot encoding  
-- Numerical scaling using StandardScaler  
-- Final processed dataset exported for reproducibility  
+- Handled missing values  
+- Label encoding & one-hot encoding for categorical columns  
+- Numerical feature scaling using StandardScaler  
+- Saved intermediate cleaned datasets for reproducibility  
 
-### 📊 **Model Features**
+### 📊 **Final Features Used**
 | Feature | Description |
 |---------|-------------|
 | CreditScore | Customer credit rating |
 | Age | Customer age |
 | Tenure | Years with bank |
 | Balance | Current account balance |
-| NumOfProducts | Number of bank services used |
+| NumOfProducts | Number of bank products used |
 | HasCrCard | Credit card status |
-| IsActiveMember | Engagement indicator |
+| IsActiveMember | Customer engagement |
 | Gender | Male/Female |
 | Geography | Country |
-| EstimatedSalary | Salary |
+| EstimatedSalary | Income level |
 
 ---
 
 ## ⚖️ **3. Handling Class Imbalance**
 
-Dataset distribution:
-- **80%** Non-Churn  
-- **20%** Churn  
+Dataset distribution:  
+- **80%** — Not churn (class 0)  
+- **20%** — Churn (class 1)  
 
-Applied strategies:
+To avoid bias toward the majority class, applied:
+
 - Random Undersampling  
 - SMOTE  
 - ADASYN  
-- Class weights  
+- Class Weights  
 - XGBoost scale_pos_weight  
 
-This ensured prediction fairness toward minority class (churners).
+Objective: improve recall of churners.
 
 ---
 
@@ -68,7 +69,7 @@ Implemented and compared:
 - Random Forest  
 - Gradient Boosting  
 - AdaBoost  
-- **XGBoost (winner)**  
+- **XGBoost (best)**  
 
 Each with:
 - Base model  
