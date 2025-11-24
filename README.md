@@ -79,7 +79,7 @@ Each with:
 
 Hyperparameter tuning applied using:
 - GridSearchCV(cv=5, scoring=[precision, recall, f1], refit='recall')
-
+- This ensures the models are optimized to **maximize recall for churn detection**, since retaining customers is more important than false positives.
 
 ---
 
@@ -93,52 +93,55 @@ Hyperparameter tuning applied using:
 | ROC-AUC | **88%** |
 | PR-AUC | **71%** |
 
-➡ Selected as final model due to best discrimination & real business recall performance.
+➡ Selected as final model due to best performance in identifying churners while maintaining strong overall ranking ability.
 
 ---
 
 ## 📁 **6. Dataset Description**
 
-Includes customer attributes & churn status:
+Includes customer details and churn indicator:
 
 - Age  
 - CreditScore  
 - Tenure  
 - Balance  
-- Salary  
+- Estimated Salary  
 - Geography  
-- Product usage  
-- Customer engagement  
-- `Exited` flag → churn (1) or not (0)
+- Gender  
+- Number of products  
+- Active membership  
+- Has/Doesn’t have credit card  
+- Target column: `Exited` (1 = churn, 0 = stay)
 
 ---
 
-## 💡 **7. Key Insights**
+## 💡 **7. Key Insights From Analysis**
 
-✔ Older customers tend to churn more  
-✔ Low activity → higher churn risk  
-✔ Customers with only 1 product have higher churn rate  
-✔ Salary itself not a strong predictor  
-✔ Geography influences churn behaviour  
+✔ Customers with low activity & engagement churn more  
+✔ Higher number of products → reduced churn  
+✔ Salary alone is not a strong predictor  
+✔ Certain geographical regions have more churn tendency  
+✔ Middle-aged customers show higher churn patterns  
 
 ---
 
 ## 🚀 **8. Future Enhancements**
 
-- Add SHAP explainability  
-- Deploy on Streamlit Cloud  
-- Integrate internal bank database  
-- Real-time refresh on new customer events  
-- API endpoint for churn monitoring pipeline  
+- Add SHAP or LIME for interpretability  
+- Create Streamlit UI for model demo  
+- Deploy model via API endpoint  
+- Continuously train model on fresh data  
+- Add temporal behaviour features (e.g., monthly transactions)  
 
 ---
 
-> 🙌 **Built with real applied ML, model evaluation depth, and practical churn interpretation to support bank business decisions.**
+> 🙌 **Built with strong ML methodology, fair sampling strategies, and statistical model evaluation to support business-driven churn reduction strategies.**
 
 ---
 
 ### 🔗 **Connect**
 
-Feel free to reach out for collaboration or improvements to extend churn prediction capabilities.
+For collaboration or suggestions — feel free to reach out!
+
 
 
