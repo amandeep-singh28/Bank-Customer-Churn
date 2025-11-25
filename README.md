@@ -1,6 +1,6 @@
 # 💼📉 Bank-Customer-Churn-Prediction-and-ML-Model-Comparison
 
-A complete customer churn analytics & prediction project built using **Python, Scikit-Learn, and XGBoost**, applying advanced ML techniques to forecast churn in the banking sector. Includes rigorous testing of multiple models, imbalance handling, real metrics evaluation (ROC-AUC / PR-AUC), and strong recall optimization for churn prediction.
+A complete churn prediction project developed using **Python and Scikit-Learn**, involving data preprocessing, feature encoding, scaling, and multiple imbalance handling techniques such as **SMOTE, ADASYN, undersampling, and class weighting**. The project applies various machine learning algorithms, including logistic models, tree-based methods, and boosting techniques such as **AdaBoost, Gradient Boosting, and XGBoost**, and evaluates their performance using metrics like **ROC-AUC, PR-AUC, Recall, and F1-Score** to enable a structured comparison and determine the most effective approach for customer churn prediction..
 
 ---
 
