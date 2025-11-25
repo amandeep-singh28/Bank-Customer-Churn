@@ -1,6 +1,6 @@
 # 💼📉 Bank-Customer-Churn-Prediction-and-ML-Model-Comparison
 
-A complete churn prediction project developed using **Python and Scikit-Learn**, involving data preprocessing, feature encoding, scaling, and multiple imbalance handling techniques such as **SMOTE, ADASYN, undersampling, and class weighting**. The project applies various machine learning algorithms, including logistic models, tree-based methods, and boosting techniques such as **AdaBoost, Gradient Boosting, and XGBoost**, and evaluates their performance using metrics like **ROC-AUC, PR-AUC, Recall, and F1-Score** to enable a structured comparison and determine the most effective approach for customer churn prediction..
+A complete churn prediction project developed using **Python and Scikit-Learn**, involving data preprocessing, feature encoding, scaling, and multiple imbalance handling techniques such as **SMOTE, ADASYN, undersampling, and class weighting**. The project applies various machine learning algorithms, including logistic models, tree-based methods, and boosting techniques such as **AdaBoost, Gradient Boosting, and XGBoost**, while carefully addressing and preventing data leakage using proper train–test split pipelines. Model performance is evaluated using metrics like ROC-AUC, PR-AUC, Recall, and F1-Score to enable a structured comparison and determine the most effective approach for customer churn prediction.
 
 ---
 
@@ -9,7 +9,7 @@ A complete churn prediction project developed using **Python and Scikit-Learn**,
 This project follows an industry-standard ML pipeline:
 
 - **Python (Pandas / Numpy)** → Data cleaning & preprocessing  
-- **EDA** → Customer behaviour & churn insights  
+- **Data Leakage Prevention** → Ensuring transformations & resampling are applied only on training data using pipelines  
 - **Imbalance Handling** → SMOTE, ADASYN, Undersampling, Class Weights  
 - **Model Training** → Trained 6 different ML algorithms + sampling variants  
 - **Model Evaluation** → Recall, F1, ROC-AUC, PR-AUC metrics  
