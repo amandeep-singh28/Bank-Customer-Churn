@@ -17,6 +17,49 @@ This project follows an industry-standard ML pipeline:
 
 ---
 
+## ✈️ **2. Detailed Project Explanation**
+
+This section describes the end-to-end workflow followed in this project, from raw data to final model comparison.
+
+### 🥇 (i). Importing and Understanding the Dataset
+- Loaded the bank customer dataset containing features such as:
+  - Customer demographics (Age, Gender, Geography)
+  - Account information (Balance, Tenure, Number of Products, HasCrCard, IsActiveMember)
+  - Financial details (CreditScore, EstimatedSalary)
+  - Target variable: **Exited** (1 = churn, 0 = not churn)
+- Performed basic checks:
+  - Shape of the dataset  
+  - Data types of each column  
+  - Presence of null values and duplicates
+
+---
+
+### 🧼 (ii). Data Cleaning
+
+- Handled missing values:
+  - Replaced null values in the `Surname` column using the mode (most frequent value).
+  - Replaced missing values in the `Age` column using the mean of the age distribution.
+
+- Standardized inconsistent categorical values:
+  - Converted `'FRA'` and `'French'` entries in the `Geography` column to `'France'` for consistency.
+
+- Cleaned numeric fields:
+  - Removed the `'€'` symbol from the `EstimatedSalary` column to ensure numerical formatting.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 🧹 **2. Data Cleaning & Preparation (Python)**
 
 ### 🔧 **Key Cleaning Operations**
