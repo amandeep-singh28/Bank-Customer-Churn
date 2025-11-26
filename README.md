@@ -23,9 +23,9 @@ This project focuses on a binary classification problem where the objective is t
 
 Initially, I began by training a Logistic Regression model and evaluating its performance using the classification report. The model showed excellent metrics (accuracy, precision, recall, F1-score) for class 0 (non-churn), but performed very poorly for class 1 (churn). This clearly indicated that the model was biased toward predicting the majority class.
 
-`from sklearn.metrics import classification_report`
-`y_pred = log_reg.predict(X_test)`
-`print(classification_report(y_test, y_pred))`
+`from sklearn.metrics import classification_report`<br>
+`y_pred = log_reg.predict(X_test)`<br>
+`print(classification_report(y_test, y_pred))`<br>
 
 
 
