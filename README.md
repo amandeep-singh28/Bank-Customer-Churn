@@ -17,6 +17,16 @@ This project follows an industry-standard ML pipeline:
 
 ---
 
+### 🧠 Model Selection Rationale & Challenges
+
+
+
+
+
+
+
+---
+
 ## ✈️ **2. Detailed Project Explanation**
 
 This section describes the end-to-end workflow followed in this project, from raw data to final model comparison.
