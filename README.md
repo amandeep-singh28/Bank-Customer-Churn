@@ -19,6 +19,17 @@ This project follows an industry-standard ML pipeline:
 
 ### 🧠 Model Selection Rationale & Challenges
 
+This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). 
+
+Initially, I began by training a Logistic Regression model and evaluating its performance using the classification report. The model showed excellent metrics (accuracy, precision, recall, F1-score) for class 0 (non-churn), but performed very poorly for class 1 (churn). This clearly indicated that the model was biased toward predicting the majority class.
+
+`from sklearn.metrics import classification_report`
+`y_pred = log_reg.predict(X_test)`
+`print(classification_report(y_test, y_pred))`
+
+
+
+Upon further investigation, I discovered that the target variable `Exited` was significantly imbalanced — there were far more customers who stayed (class 0) compared to those who churned (class 1). This class imbalance was the root cause of the model’s weak predictive performance on churned customers, prompting the need for imbalance handling techniques.
 
 
 
