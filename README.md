@@ -46,6 +46,21 @@ This section describes the end-to-end workflow followed in this project, from ra
 - Cleaned numeric fields:
   - Removed the `'€'` symbol from the `EstimatedSalary` column to ensure numerical formatting.
 
+---
+
+### 📉 3. Outlier Detection & Handling
+
+- Visualized all numerical features using boxplots to detect potential outliers.  
+- Used the IQR (Interquartile Range) method along with list comprehension to isolate and display outlier values for review.  
+- Identified a few invalid entries in `EstimatedSalary` (negative values) and removed them to maintain data integrity.  
+- Plotted histograms for each numerical feature to understand their distributions and validate the impact of outlier removal.
+
+---
+
+### 🔁 4. Feature Encoding & Preprocessing
+
+- Applied One-Hot Encoding on the `Geography` column using `pd.get_dummies`, while dropping the first dummy column to avoid the dummy variable trap and reduce multicollinearity.  
+- Converted binary categorical columns (`Gender`, `HasCrCard`, `IsActiveMember`) into numeric form using `LabelEncoder` for efficient model ingestion.
 
 
 
