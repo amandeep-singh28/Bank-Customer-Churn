@@ -263,13 +263,120 @@ While the Decision Tree demonstrates meaningful improvement over Logistic Regres
 
 ---
 
-### (x) Random Forest
+### (xi) Random Forest
 
-Random Forest is an ensemble learning method that builds multiple Decision Trees and combines their results to produce more stable and accurate predictions. It falls under the **bagging (bootstrap aggregating)** technique, where multiple models are trained in parallel on different random subsets of the data.
+Random Forest is an ensemble learning method that builds multiple Decision Trees and combines their outcomes to produce more stable and accurate predictions. It follows the **bagging (bootstrap aggregating)** strategy, where multiple trees are trained in parallel on different random subsets of the data. 
 
-This approach reduces overfitting by averaging results across many trees rather than relying on a single tree’s decision. In regression tasks, the final prediction is the mean of all tree outputs, and in binary classification, **majority voting** is used to determine the final class.
- 
+This significantly reduces overfitting compared to a single Decision Tree by averaging predictions across many trees. In classification problems, the final output is determined through **majority voting**, making Random Forest more robust and reliable.
 
+To optimize the Random Forest model, I performed **Hyperparameter Tuning** using `GridSearchCV`, which finds the best parameter combination through exhaustive cross-validation.
+
+The parameter grid used:
+
+`param_grid = {`  
+`    'random_forest__criterion': ['gini', 'entropy'],`  
+`    'random_forest__max_depth': [3, 5, 7, 10, 15, 20, None],`  
+`    'random_forest__min_samples_split': [2, 5, 10],`  
+`    'random_forest__min_samples_leaf': [1, 2, 4]`  
+`}`
+
+Scoring metrics used during grid search:
+
+`scoring = {`  
+`    'accuracy' : 'accuracy',`  
+`    'precision' : 'precision',`  
+`    'recall' : 'recall',`  
+`    'f1' : 'f1'`  
+`}`
+
+Grid search execution:
+
+`grid_search = GridSearchCV(estimator=pipe,`  
+`                           param_grid = param_grid,`  
+`                           cv = 5,`  
+`                           scoring = scoring,`  
+`                           refit = 'recall'`  
+`)`
+
+#### 📊 Classification Report (Random Forest)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.88 | 0.75 |
+| Recall | 0.96 | 0.49 |
+| F1-score | 0.92 | 0.59 |
+| Support | 2389 | 611 |
+
+It is important to note that these results are from the base Random Forest model trained directly on the original imbalanced dataset, without the use of any resampling or class weighting methods.
+Random Forest clearly outperforms the Decision Tree, achieving a much better balance between recall and precision while reducing overfitting due to its ensemble nature. The model captures churn cases more effectively and demonstrates stronger generalization performance.
+
+---
+
+### (xii) Random Forest + Undersampling
+
+Undersampling was applied to Random Forest to balance the dataset by reducing the majority class. Since undersampling was already explained earlier, the same concept is used here without repeating the full theory.
+
+#### 📊 Classification Report (Random Forest + Undersampling)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.50 |
+| Recall | 0.81 | 0.74 |
+| F1-score | 0.86 | 0.59 |
+| Support | 2389 | 611 |
+
+Using undersampling, Random Forest achieves a strong recall of **0.74** for churn cases while maintaining solid overall performance. Although precision for the churn class decreases due to more false positives, the model becomes significantly better at identifying customers likely to leave.
+
+---
+
+### (xiii) Random Forest + SMOTE
+
+Applying SMOTE with Random Forest generates synthetic samples for the minority class, allowing the model to learn churn patterns more effectively without losing any original data.
+
+#### 📊 Classification Report (Random Forest + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.51 |
+| Recall | 0.82 | 0.72 |
+| F1-score | 0.87 | 0.60 |
+| Support | 2389 | 611 |
+
+SMOTE helps Random Forest maintain high recall for churners (0.72) while using the full dataset with synthetic samples. This leads to a balanced performance, and a strong ability to detect churn customers more reliably compared to the base model.
+
+---
+
+### (xiv) Random Forest + ADASYN
+
+ADASYN emphasizes difficult-to-classify minority samples by generating more synthetic data in regions where churners are surrounded by majority class samples. This helps Random Forest focus on complex boundary cases.
+
+#### 📊 Classification Report (Random Forest + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.46 |
+| Recall | 0.78 | 0.76 |
+| F1-score | 0.84 | 0.57 |
+| Support | 2389 | 611 |
+
+ADASYN improves the recall for churners to **0.76**, the highest among RF techniques so far. However, precision drops due to more aggressive churn predictions. This shows that ADASYN helps identify more churners, but increases false positives slightly.
+
+---
+
+### (xv) Random Forest + Class Weighting
+
+Here, instead of modifying the dataset, class weights were applied to penalize misclassification of the churn class — giving more importance to class 1 during training.
+
+#### 📊 Classification Report (Random Forest + Class Weighting)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.52 |
+| Recall | 0.82 | 0.74 |
+| F1-score | 0.87 | 0.61 |
+| Support | 2389 | 611 |
+
+Class weighting produces almost the same performance as SMOTE, achieving a good recall of 0.74 for churners without generating synthetic data or removing samples. This makes it an efficient approach that maintains dataset integrity while improving minority class detection.
 
 
 
