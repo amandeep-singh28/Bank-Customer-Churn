@@ -34,7 +34,7 @@ Initially, I began by training a Logistic Regression model and evaluating its pe
 | Support | 2389 | 611 |
 
 It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
-Additionally, the following distribution further confirms the class imbalance in the target variable:
+Upon further investigation, I discovered that the target variable `Exited` was significantly imbalanced — there were far more customers who stayed (class 0) compared to those who churned (class 1). This class imbalance was the root cause of the model’s weak predictive performance on churned customers, prompting the need for imbalance handling techniques.
 `y.value_counts()`
 | Exited (y) | Count |
 |------------|-------|
@@ -43,13 +43,6 @@ Additionally, the following distribution further confirms the class imbalance in
 
 
 
-`from sklearn.metrics import classification_report`<br>
-`y_pred = log_reg.predict(X_test)`<br>
-`print(classification_report(y_test, y_pred))`<br>
-
-
-
-Upon further investigation, I discovered that the target variable `Exited` was significantly imbalanced — there were far more customers who stayed (class 0) compared to those who churned (class 1). This class imbalance was the root cause of the model’s weak predictive performance on churned customers, prompting the need for imbalance handling techniques.
 
 
 
