@@ -38,8 +38,6 @@ Initially, I began by training a Logistic Regression model and evaluating its pe
 
 It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
 
----
-
 To verify this, I examined the distribution of the target variable `Exited`, which showed a clear imbalance:
 `y.value_counts()`
 | Exited (y) | Count |
@@ -112,8 +110,63 @@ ADASYN (Adaptive Synthetic Sampling) is similar to SMOTE, but instead of generat
 
 ADASYN further improves recall for Class 1 (0.75), but precision decreases slightly. The model becomes more aggressive in predicting churn, catching more true churners, but also producing more false alarms. This behavior is expected due to the increased focus on hard-to-classify minority instances.
 
+---
+
+### 🧩 Conclusion for Logistic Regression
+
+Although Logistic Regression provides a simple and interpretable baseline model, its performance on this dataset remains limited due to the nonlinear relationships and strong class imbalance present in the target variable. Even after applying various imbalance handling techniques — such as undersampling, SMOTE, ADASYN, and class weighting — the model still struggled to consistently and reliably identify churners.
+
+Therefore, Logistic Regression is not suitable as the final model choice for this problem, especially when more advanced and robust models like tree-based and boosting algorithms (e.g., Decision Tree, Random Forest, Gradient Boosting, XGBoost) can capture complex feature interactions and handle imbalance more effectively.
+
+---
+
+### (v) Decision Tree
+
+A Decision Tree is a flowchart-like structure used for decision making and classification. Unlike Logistic Regression, Decision Trees can handle non-linear relationships between features. However, they also have a tendency to **overfit**, especially when the tree grows too deep and learns noise rather than patterns, leading to **low bias and high variance**.
+
+Since the dataset is large and contains complex relationships, I did not manually control tree depth using pruning or `max_depth`. Instead, I performed **Hyperparameter Tuning** to optimize the model. Hyperparameters are parameters set **before** training that influence how the model learns.
+
+To achieve this, I used `GridSearchCV`, which helps in finding the best combination of hyperparameters using cross-validation.
+
+The parameter grid used:
+
+`param_grid = {
+    'decision_tree__criterion': ['gini', 'entropy'],
+    'decision_tree__splitter': ['best', 'random'],
+    'decision_tree__max_depth': [None, 10, 20, 30],
+    'decision_tree__min_samples_split': [2, 5, 10],
+    'decision_tree__min_samples_leaf': [1, 2, 4]
+}`
+
+Scoring metrics used during grid search:
+
+`scoring = {
+    'accuracy' : 'accuracy',
+    'precision' : 'precision',
+    'recall' : 'recall',
+    'f1' : 'f1'
+}`
+
+Grid search execution:
+
+`grid_search = GridSearchCV(estimator=pipe,
+                           param_grid=param_grid,
+                           cv=5,
+                           scoring=scoring,
+                           refit='recall'
+)`
 
 
+#### 📊 Classification Report (Decision Tree)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.88 | 0.50 |
+| Recall | 0.86 | 0.53 |
+| F1-score | 0.87 | 0.51 |
+| Support | 2389 | 611 |
+
+It is important to note that this base Decision Tree model was trained on the original imbalanced dataset, without any resampling or class weighting applied. This imbalance contributed to the weaker performance on the churn class, reinforcing the need for imbalance handling techniques and more robust ensemble models.
 
 
 
