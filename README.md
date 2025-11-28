@@ -19,9 +19,27 @@ This project follows an industry-standard ML pipeline:
 
 ### 🧠 Model Selection Rationale & Challenges
 
-This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). 
+This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). I began by experimenting with three base models — **Logistic Regression**, **Decision Tree**, and **Random Forest**. Below is a detailed explanation of the challenges encountered with each model and the workflow followed to understand and improve their performance.
+
+
+### (i) Logistic Regression
 
 Initially, I began by training a Logistic Regression model and evaluating its performance using the classification report. The model showed excellent metrics (accuracy, precision, recall, F1-score) for class 0 (non-churn), but performed very poorly for class 1 (churn). This clearly indicated that the model was biased toward predicting the majority class.
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.83 | 0.61 |
+| Recall | 0.96 | 0.21 |
+| F1-score | 0.89 | 0.32 |
+| Support | 2389 | 611 |
+
+It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
+Additionally, the following distribution further confirms the class imbalance in the target variable:
+`y.value_counts()`
+|Exited(y)| 
+|0    7960|
+|1    2037|
+
 
 `from sklearn.metrics import classification_report`<br>
 `y_pred = log_reg.predict(X_test)`<br>
