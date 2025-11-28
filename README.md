@@ -4,7 +4,7 @@ A complete churn prediction project developed using **Python and Scikit-Learn**,
 
 ---
 
-## 🧩 Project Workflow Overview
+## 🧩 **1. Project Workflow Overview**
 
 This project follows an industry-standard ML pipeline:
 
@@ -17,7 +17,7 @@ This project follows an industry-standard ML pipeline:
 
 ---
 
-## 🧠 Model Selection Rationale & Challenges
+## 🧠 **2. Model Selection Rationale & Challenges**
 
 This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). I began by experimenting with three base models — **Logistic Regression**, **Decision Tree**, and **Random Forest**. Below is a detailed explanation of the challenges encountered with each model and the workflow followed to understand and improve their performance.
 
