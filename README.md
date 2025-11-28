@@ -715,11 +715,8 @@ These numbers confirm that:
 - The model makes reliable high-confidence churn predictions  
 - The minority class detection (PR-AUC) is significantly better than other models  
 
----
-
 ### 🧩 Final Interpretation
 
-```md
 Even though multiple models achieved similar recall values, XGBoost proved superior when evaluated using ROC-AUC and PR-AUC. The combination of strong ranking ability (ROC-AUC = 0.88) and focused minority performance (PR-AUC = 0.71) confirms that XGBoost provides the best overall performance and is the most reliable model for churn prediction.
 
 ---
