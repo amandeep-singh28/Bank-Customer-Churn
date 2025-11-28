@@ -36,7 +36,8 @@ Initially, I began by training a Logistic Regression model and evaluating its pe
 It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
 Additionally, the following distribution further confirms the class imbalance in the target variable:
 `y.value_counts()`
-|Exited(y)| 
+|Exited(y)|
+|---------| 
 |0    7960|
 |1    2037|
 
