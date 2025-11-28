@@ -52,6 +52,10 @@ To verify this, I examined the distribution of the target variable `Exited`, whi
 ### (ii) Logistic Regression + Undersampling Approach
 
 To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.
+`from imblearn.under_sampling import RandomUnderSampler`
+`steps = [("preprocess", preprocessor),`
+`         ("undersampling", RandomUnderSampler(random_state = 42)),`
+`         ("logistic_regression", LogisticRegression(random_state = 42))]`
 
 #### 📊 Classification Report (Logistic Regression + Undersampling)
 
@@ -68,7 +72,43 @@ It can be observed that the recall value for Class 1 increased significantly (fr
 
 ### (iii) Logistic Regression + SMOTE
 
+SMOTE (Synthetic Minority Oversampling Technique) is an oversampling method that generates new synthetic samples for the minority class rather than simply duplicating existing records. It does this by interpolating between neighboring minority class samples using the K-Nearest Neighbours approach. This allows the model to learn more generalized minority patterns and typically performs better than both random oversampling and undersampling.
+`from imblearn.over_sampling import SMOTE`
+`steps = [("preprocess", preprocessor),`
+`         ("smote", SMOTE(random_state = 42)),`
+`         ("logistic_regression", LogisticRegression(random_state = 42))]`
 
+#### 📊 Classification Report (Logistic Regression + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.91 | 0.40 |
+| Recall | 0.72 | 0.71 |
+| F1-score | 0.81 | 0.51 |
+| Support | 2389 | 611 |
+
+Compared to undersampling, SMOTE retains all original data and generates artificial churn examples, leading to a much more balanced learning process. The recall for Class 1 remains significantly higher compared to the baseline model, indicating strong improvement in detecting churners.
+
+---
+
+### (iv) Logistic Regression + ADASYN
+
+ADASYN (Adaptive Synthetic Sampling) is similar to SMOTE, but instead of generating an equal number of synthetic samples around each minority instance, it focuses on generating more samples for minority points that are harder to learn — specifically those located in regions dominated by the majority class. This makes the model pay more attention to difficult minority examples.
+`from imblearn.over_sampling import ADASYN`
+`steps = [("preprocess", preprocessor),`
+`         ("adasyn", ADASYN(random_state = 42)),`
+`         ("logistic_regression", LogisticRegression(random_state = 42))]`
+
+#### 📊 Classification Report (Logistic Regression + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.91 | 0.38 |
+| Recall | 0.68 | 0.75 |
+| F1-score | 0.78 | 0.50 |
+| Support | 2389 | 611 |
+
+ADASYN further improves recall for Class 1 (0.75), but precision decreases slightly. The model becomes more aggressive in predicting churn, catching more true churners, but also producing more false alarms. This behavior is expected due to the increased focus on hard-to-classify minority instances.
 
 
 
