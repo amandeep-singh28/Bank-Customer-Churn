@@ -4,7 +4,7 @@ A complete churn prediction project developed using **Python and Scikit-Learn**,
 
 ---
 
-## 🧩 **1. Project Workflow Overview**
+## 🧩 Project Workflow Overview
 
 This project follows an industry-standard ML pipeline:
 
@@ -17,13 +17,15 @@ This project follows an industry-standard ML pipeline:
 
 ---
 
-### 🧠 Model Selection Rationale & Challenges
+## 🧠 Model Selection Rationale & Challenges
 
 This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). I began by experimenting with three base models — **Logistic Regression**, **Decision Tree**, and **Random Forest**. Below is a detailed explanation of the challenges encountered with each model and the workflow followed to understand and improve their performance.
 
 ---
 
-### (i) Logistic Regression
+# 🔹 Logistic Regression Family
+
+### Logistic Regression
 
 Initially, I began by training a Logistic Regression model and evaluating its performance using the classification report. The model showed excellent metrics (accuracy, precision, recall, F1-score) for class 0 (non-churn), but performed very poorly for class 1 (churn). This clearly indicated that the model was biased toward predicting the majority class.
 
@@ -47,14 +49,13 @@ To verify this, I examined the distribution of the target variable `Exited`, whi
 
 ---
 
-### (ii) Logistic Regression + Undersampling Approach
+### Logistic Regression + Undersampling
 
 To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.<br>
 `from imblearn.under_sampling import RandomUnderSampler`  
 `steps = [("preprocess", preprocessor),`  
 `         ("undersampling", RandomUnderSampler(random_state=42)),`  
 `         ("logistic_regression", LogisticRegression(random_state=42))]`
-
 
 #### 📊 Classification Report (Logistic Regression + Undersampling)
 
@@ -69,7 +70,7 @@ It can be observed that the recall value for Class 1 increased significantly (fr
 
 ---
 
-### (iii) Logistic Regression + SMOTE
+### Logistic Regression + SMOTE
 
 SMOTE (Synthetic Minority Oversampling Technique) is an oversampling method that generates new synthetic samples for the minority class rather than simply duplicating existing records. It does this by interpolating between neighboring minority class samples using the K-Nearest Neighbours approach. This allows the model to learn more generalized minority patterns and typically performs better than both random oversampling and undersampling.<br>
 `from imblearn.over_sampling import SMOTE`  
@@ -90,14 +91,13 @@ Compared to undersampling, SMOTE retains all original data and generates artific
 
 ---
 
-### (iv) Logistic Regression + ADASYN
+### Logistic Regression + ADASYN
 
 ADASYN (Adaptive Synthetic Sampling) is similar to SMOTE, but instead of generating an equal number of synthetic samples around each minority instance, it focuses on generating more samples for minority points that are harder to learn — specifically those located in regions dominated by the majority class. This makes the model pay more attention to difficult minority examples.<br>
 `from imblearn.over_sampling import ADASYN`  
 `steps = [("preprocess", preprocessor),`  
 `         ("adasyn" ADASYN(random_state=42)),`  
 `         ("logistic_regression", LogisticRegression(random_state=42))]`
-
 
 #### 📊 Classification Report (Logistic Regression + ADASYN)
 
@@ -112,13 +112,11 @@ ADASYN further improves recall for Class 1 (0.75), but precision decreases sligh
 
 ---
 
-### (v) Logistic Regression + Class Weighting
+### Logistic Regression + Class Weighting
 
 In this approach, instead of modifying the dataset, class weights were applied to penalize misclassification of the minority class. This instructs the model to treat churn cases (class 1) as more important during training.<br>
 `steps = [("preprocess", preprocessor),`  
 `         ("logistic_regression", LogisticRegression(random_state=42, class_weight='balanced'))]`
-
-
 
 #### 📊 Classification Report (Logistic Regression + Class Weights)
 
@@ -141,7 +139,9 @@ Therefore, Logistic Regression is not suitable as the final model choice for thi
 
 ---
 
-### (vi) Decision Tree
+# 🔹 Decision Tree Family
+
+### Decision Tree
 
 A Decision Tree is a flowchart-like structure used for decision making and classification. Unlike Logistic Regression, Decision Trees can handle non-linear relationships between features. However, they also have a tendency to **overfit**, especially when the tree grows too deep and learns noise rather than patterns, leading to **low bias and high variance**.
 
@@ -159,7 +159,6 @@ The parameter grid used:
 `    'decision_tree__min_samples_leaf': [1, 2, 4]`  
 `}`
 
-
 Scoring metrics used during grid search:
 
 `scoring = {`  
@@ -169,7 +168,6 @@ Scoring metrics used during grid search:
 `    'f1' : 'f1'`  
 `}`
 
-
 Grid search execution:
 
 `grid_search = GridSearchCV(estimator = pipe,`  
@@ -178,7 +176,6 @@ Grid search execution:
 `                           scoring = scoring,`  
 `                           refit = 'recall'`  
 `)`
-
 
 #### 📊 Classification Report (Decision Tree)
 
@@ -193,7 +190,7 @@ It is important to note that this base Decision Tree model was trained on the or
 
 ---
 
-### (vii) Decision Tree + Undersampling
+### Decision Tree + Undersampling
 
 Since undersampling was already demonstrated previously, the same approach was applied here using Decision Tree to check its impact on performance.
 
@@ -210,7 +207,7 @@ With undersampling, the Decision Tree also shows a strong boost in recall for Cl
 
 ---
 
-### (viii) Decision Tree + SMOTE
+### Decision Tree + SMOTE
 
 Applying SMOTE to Decision Tree allowed the model to train on a synthetically balanced dataset without losing original class 0 data. This helps the tree better capture churn patterns that were previously underrepresented.
 
@@ -227,7 +224,7 @@ This configuration significantly improves the detection of churners while mainta
 
 ---
 
-### (ix) Decision Tree + ADASYN
+### Decision Tree + ADASYN
 
 Using ADASYN with Decision Tree further emphasizes samples that are harder to classify by generating synthetic points in regions where the minority class is underrepresented. This helps the model better generalize on challenging churn cases.
 
@@ -244,7 +241,7 @@ With ADASYN, the Decision Tree achieves a strong recall of 0.74 for the churn cl
 
 ---
 
-### (x) Decision Tree + Class Weighting
+### Decision Tree + Class Weighting
 
 Instead of modifying the dataset, class weights were applied to penalize misclassification of churn cases. This makes the model assign greater importance to minority class samples during training.
 
@@ -267,7 +264,9 @@ While the Decision Tree demonstrates meaningful improvement over Logistic Regres
 
 ---
 
-### (xi) Random Forest
+# 🔹 Random Forest Family
+
+### Random Forest
 
 Random Forest is an ensemble learning method that builds multiple Decision Trees and combines their outcomes to produce more stable and accurate predictions. It follows the **bagging (bootstrap aggregating)** strategy, where multiple trees are trained in parallel on different random subsets of the data. 
 
@@ -316,7 +315,7 @@ Random Forest clearly outperforms the Decision Tree, achieving a much better bal
 
 ---
 
-### (xii) Random Forest + Undersampling
+### Random Forest + Undersampling
 
 Undersampling was applied to Random Forest to balance the dataset by reducing the majority class. Since undersampling was already explained earlier, the same concept is used here without repeating the full theory.
 
@@ -333,7 +332,7 @@ Using undersampling, Random Forest achieves a strong recall of **0.74** for chur
 
 ---
 
-### (xiii) Random Forest + SMOTE
+### Random Forest + SMOTE
 
 Applying SMOTE with Random Forest generates synthetic samples for the minority class, allowing the model to learn churn patterns more effectively without losing any original data.
 
@@ -350,7 +349,7 @@ SMOTE helps Random Forest maintain high recall for churners (0.72) while using t
 
 ---
 
-### (xiv) Random Forest + ADASYN
+### Random Forest + ADASYN
 
 ADASYN emphasizes difficult-to-classify minority samples by generating more synthetic data in regions where churners are surrounded by majority class samples. This helps Random Forest focus on complex boundary cases.
 
@@ -367,7 +366,7 @@ ADASYN improves the recall for churners to **0.76**, the highest among RF techni
 
 ---
 
-### (xv) Random Forest + Class Weighting
+### Random Forest + Class Weighting
 
 Here, instead of modifying the dataset, class weights were applied to penalize misclassification of the churn class — giving more importance to class 1 during training.
 
@@ -390,16 +389,22 @@ Random Forest demonstrates a strong improvement over the single Decision Tree mo
 
 ---
 
-### (xvi) Boosting Techniques
+# 🔹 Boosting Techniques Overview
+
 Boosting is an ensemble method where models (weak learners) are built sequentially — each subsequent model focuses on correcting the errors made by the previous ones. Individually, these weak learners may not perform very well, but when combined, they form a strong and highly accurate predictive model.
 
 In this project, I implemented three boosting algorithms:
 - **AdaBoost (Adaptive Boosting)**
 - **Gradient Boosting**
 - **XGBoost (Extreme Gradient Boosting)**
+
 Below, I provide the detailed explanation and performance analysis of each boosting method used in this project.
 
-### (xvii) AdaBoost (Adaptive Boosting)
+---
+
+## AdaBoost Section
+
+### AdaBoost (Adaptive Boosting)
 
 AdaBoost works by iteratively training weak learners (typically shallow decision trees) and assigning higher weights to the samples that were misclassified in previous rounds. This forces subsequent models to focus increasingly on the difficult cases. Over successive iterations, these weighted weak learners combine to form a strong classifier.
 
@@ -441,7 +446,7 @@ AdaBoost achieves very high precision for the churn class, meaning that when it 
 
 ---
 
-### (xviii) AdaBoost (Varying Base Estimator Depth)
+### AdaBoost (Varying Base Estimator Depth)
 
 Since AdaBoost commonly performs best with very shallow decision trees (decision stumps), I experimented with varying the depth of the base estimator from 1 to 6. The observation from this experiment was that as the depth increased, the model started overfitting — learning the majority class too strongly and failing to generalize to the minority class (churners). This resulted in consistently weaker performance for class 1 with deeper trees.
 
@@ -449,7 +454,7 @@ For a detailed view of how metrics changed across different depths, refer to the
 
 ---
 
-### (xix) AdaBoost + SMOTE
+### AdaBoost + SMOTE
 
 Since AdaBoost on its own does not perform well on imbalanced data, applying SMOTE helped balance the dataset by generating synthetic samples for the churn class, resulting in improved performance for Class 1.
 
@@ -466,7 +471,7 @@ This configuration significantly boosts recall for churners (0.74) compared to b
 
 ---
 
-### (xx) AdaBoost + ADASYN
+### AdaBoost + ADASYN
 
 Using ADASYN emphasizes difficult-to-learn minority samples by generating synthetic churn examples in regions where class 1 is underrepresented. This allows AdaBoost to focus more on challenging churn cases during training.
 
@@ -489,7 +494,9 @@ AdaBoost demonstrated strong precision for churn predictions and benefits from i
 
 ---
 
-### (xxi) Gradient Boosting
+## Gradient Boosting Section
+
+### Gradient Boosting
 
 Gradient Boosting builds trees sequentially, where each new tree attempts to correct the residual errors (the difference between actual and predicted values) made by the previous model. This method is theoretically more powerful than AdaBoost since it optimizes using gradients rather than reweighting samples.
 
@@ -506,7 +513,7 @@ While Gradient Boosting delivers high accuracy and strong performance on the maj
 
 ---
 
-### (xxii) Gradient Boosting + SMOTE
+### Gradient Boosting + SMOTE
 
 Applying SMOTE with Gradient Boosting helped balance the dataset by generating synthetic samples for minority class 1, allowing the model to better learn churn-related patterns.
 
@@ -523,7 +530,7 @@ With SMOTE, Gradient Boosting shows a significant improvement in recall for chur
 
 ---
 
-### (xxiii) Gradient Boosting + ADASYN
+### Gradient Boosting + ADASYN
 
 #### 📊 Classification Report (Gradient Boosting + ADASYN)
 
@@ -553,7 +560,9 @@ Gradient Boosting demonstrated strong capability in modeling complex relationshi
 
 ---
 
-### (xxiv) XGBoost (Extreme Gradient Boosting)
+## XGBoost Section
+
+### XGBoost (Extreme Gradient Boosting)
 
 XGBoost is an optimized and regularized version of Gradient Boosting that incorporates advanced features such as:
 - L1 and L2 regularization (reduces overfitting)
@@ -577,7 +586,7 @@ XGBoost achieves a strong recall of **0.76** for churn cases — significantly b
 
 ---
 
-### (xxv) XGBoost + SMOTE
+### XGBoost + SMOTE
 
 Applying SMOTE with XGBoost generates synthetic samples for churn cases and helps reduce the class imbalance while still leveraging XGBoost’s strong regularization and tree optimization capabilities.
 
@@ -590,11 +599,11 @@ Applying SMOTE with XGBoost generates synthetic samples for churn cases and help
 | F1-score | 0.88 | 0.62 |
 | Support | 2389 | 611 |
 
-XGBoost combined with SMOTE achieves stronger recall for churn (0.73) and improves overall model balance, resulting in higher accuracy (0.82). SMOTE helps XGBoost capture more churn cases than the base XGBoost, although it slightly impacts precision due to more aggressive positive predictions. Overall, this combination delivers one of the best trade-offs between recall and precision among all tested models.
+XGBoost combined with SMOTE achieves stronger recall for churn (0.73) and improves overall model balance, resulting in higher accuracy (0.82). SMOTE helps XGBoost capture more churn cases than the base XGBoost, although it slightly impacts precision due to more aggressive positive predictions.
 
 ---
 
-### (xxvi) XGBoost + ADASYN
+### XGBoost + ADASYN
 
 Using ADASYN, additional synthetic minority samples were generated, especially for harder-to-classify churn cases. This allows XGBoost to learn more subtle churn patterns near the decision boundary.
 
@@ -615,7 +624,7 @@ ADASYN increases the recall of churn detection to **0.76**, matching the trend s
 
 XGBoost emerged as the best-performing model across all experiments due to its ability to generalize well, handle complex nonlinear relationships, and maintain stability even under sampling-based imbalance corrections. It consistently delivered high recall for the churn class while preserving strong precision for non-churn predictions, making it a highly reliable model for identifying at-risk customers. Considering both performance metrics and real-world usability, XGBoost provides the most balanced and effective solution for churn prediction in this project.
 
-
+---
 
 
 ## ✈️ **2. Detailed Project Explanation**
