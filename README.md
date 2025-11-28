@@ -21,10 +21,13 @@ This project follows an industry-standard ML pipeline:
 
 This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). I began by experimenting with three base models — **Logistic Regression**, **Decision Tree**, and **Random Forest**. Below is a detailed explanation of the challenges encountered with each model and the workflow followed to understand and improve their performance.
 
+---
 
 ### (i) Logistic Regression
 
 Initially, I began by training a Logistic Regression model and evaluating its performance using the classification report. The model showed excellent metrics (accuracy, precision, recall, F1-score) for class 0 (non-churn), but performed very poorly for class 1 (churn). This clearly indicated that the model was biased toward predicting the majority class.
+
+#### 📊 Classification Report (Logistic Regression)
 
 | Metric | Class 0 (Not churn) | Class 1 (Churn) |
 |--------|-------------------|----------------|
@@ -33,8 +36,11 @@ Initially, I began by training a Logistic Regression model and evaluating its pe
 | F1-score | 0.89 | 0.32 |
 | Support | 2389 | 611 |
 
-It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.<br>
-Upon further investigation, I discovered that the target variable `Exited` was significantly imbalanced — there were far more customers who stayed (class 0) compared to those who churned (class 1). This class imbalance was the root cause of the model’s weak predictive performance on churned customers, prompting the need for imbalance handling techniques.
+It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
+
+---
+
+To verify this, I examined the distribution of the target variable `Exited`, which showed a clear imbalance:
 `y.value_counts()`
 | Exited (y) | Count |
 |------------|-------|
