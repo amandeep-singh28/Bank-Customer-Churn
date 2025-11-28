@@ -52,10 +52,11 @@ To verify this, I examined the distribution of the target variable `Exited`, whi
 ### (ii) Logistic Regression + Undersampling Approach
 
 To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.
-`from imblearn.under_sampling import RandomUnderSampler`
-`steps = [("preprocess", preprocessor),`
-`         ("undersampling", RandomUnderSampler(random_state = 42)),`
-`         ("logistic_regression", LogisticRegression(random_state = 42))]`
+`from imblearn.under_sampling import RandomUnderSampler`  
+`steps = [("preprocess", preprocessor),`  
+`         ("undersampling", RandomUnderSampler(random_state=42)),`  
+`         ("logistic_regression", LogisticRegression(random_state=42))]`
+
 
 #### 📊 Classification Report (Logistic Regression + Undersampling)
 
