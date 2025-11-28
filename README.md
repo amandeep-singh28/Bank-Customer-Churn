@@ -33,7 +33,7 @@ Initially, I began by training a Logistic Regression model and evaluating its pe
 | F1-score | 0.89 | 0.32 |
 | Support | 2389 | 611 |
 
-It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.
+It is clear from the above table that Class 0 significantly outperforms Class 1 across all metrics. This indicates that the model is biased toward the majority class and struggles to correctly identify churned customers due to the dataset’s imbalance.<br>
 Upon further investigation, I discovered that the target variable `Exited` was significantly imbalanced — there were far more customers who stayed (class 0) compared to those who churned (class 1). This class imbalance was the root cause of the model’s weak predictive performance on churned customers, prompting the need for imbalance handling techniques.
 `y.value_counts()`
 | Exited (y) | Count |
