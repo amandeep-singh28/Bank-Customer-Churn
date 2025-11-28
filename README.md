@@ -642,7 +642,6 @@ XGBoost achieves a strong recall of **0.76** for churn cases — significantly b
 
 (ii) Since XGBoost is a more advanced boosting algorithm than AdaBoost and Gradient Boosting, it supports tuning parameters such as `max_depth`, `subsample`, and `colsample_bytree`, which control tree complexity and feature sampling. This allows XGBoost to reduce overfitting and improve generalization — something not applicable to AdaBoost’s shallow stumps model architecture.
 
-
 ---
 
 ### XGBoost + SMOTE
