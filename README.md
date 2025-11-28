@@ -17,6 +17,78 @@ This project follows an industry-standard ML pipeline:
 
 ---
 
+## 🧼 **2. Data Preparation, Cleaning & Outlier Handling**
+
+### 🥇 (i). Importing and Understanding the Dataset
+- Loaded the bank customer dataset containing features such as:
+  - Customer demographics (Age, Gender, Geography)
+  - Account information (Balance, Tenure, Number of Products, HasCrCard, IsActiveMember)
+  - Financial details (CreditScore, EstimatedSalary)
+  - Target variable: **Exited** (1 = churn, 0 = not churn)
+- Performed basic checks:
+  - Shape of the dataset  
+  - Data types of each column  
+  - Presence of null values and duplicates
+
+---
+
+### 🧼 (ii). Data Cleaning
+
+- Handled missing values:
+  - Replaced null values in the `Surname` column using the mode (most frequent value).
+  - Replaced missing values in the `Age` column using the mean of the age distribution.
+
+- Standardized inconsistent categorical values:
+  - Converted `'FRA'` and `'French'` entries in the `Geography` column to `'France'` for consistency.
+
+- Cleaned numeric fields:
+  - Removed the `'€'` symbol from the `EstimatedSalary` column to ensure numerical formatting.
+
+---
+
+### 📉 3. Outlier Detection & Handling
+
+- Visualized all numerical features using boxplots to detect potential outliers.  
+- Used the IQR (Interquartile Range) method along with list comprehension to isolate and display outlier values for review.  
+- Identified a few invalid entries in `EstimatedSalary` (negative values) and removed them to maintain data integrity.  
+- Plotted histograms for each numerical feature to understand their distributions and validate the impact of outlier removal.
+
+---
+
+### 🔁 4. Feature Encoding & Preprocessing
+
+- Applied One-Hot Encoding on the `Geography` column using `pd.get_dummies`, while dropping the first dummy column to avoid the dummy variable trap and reduce multicollinearity.  
+- Converted binary categorical columns (`Gender`, `HasCrCard`, `IsActiveMember`) into numeric form using `LabelEncoder` for efficient model ingestion.
+
+---
+
+### 🧠 5. Preventing Data Leakage using Pipelines & ColumnTransformer  
+
+To ensure fair model evaluation and prevent accidental leakage of information from the test data into the training process, I used Scikit-Learn’s `Pipeline` along with `ColumnTransformer` for every single model configuration.  
+This ensured that:  
+- Encoding  
+- Scaling  
+- Imbalance treatment  
+…were applied **only on the training data**, never on the test set.  
+
+This approach protected the validity of model performance by ensuring that the model never had access to unseen test data during preprocessing.  
+
+Key principles followed:  
+- All preprocessing steps were fitted *only* using training data  
+- Test data only inherited the transformation parameters  
+- No resampling or scaling occurred before the train-test split  
+
+Example structure followed internally:  
+`steps = [("preprocess", preprocessor), ("model", <classifier>)]`  
+
+Where `preprocessor` was defined using `ColumnTransformer`, separating:  
+- numeric features → scaled using StandardScaler  
+- categorical features → encoded using OneHotEncoder  
+
+This ensured that the entire workflow was clean, reproducible, and fully compliant with industry-standard ML engineering methodology.
+
+---
+
 ## 🧠 **2. Model Selection Rationale & Challenges**
 
 This project focuses on a binary classification problem where the objective is to predict whether a customer will stay with the bank or churn (leave). I began by experimenting with three base models — **Logistic Regression**, **Decision Tree**, and **Random Forest**. Below is a detailed explanation of the challenges encountered with each model and the workflow followed to understand and improve their performance.
@@ -715,134 +787,11 @@ These numbers confirm that:
 - The model makes reliable high-confidence churn predictions  
 - The minority class detection (PR-AUC) is significantly better than other models  
 
-### 🧩 Final Interpretation
+---
+
+## 🚀 **4. Final Interpretation**
 
 Even though multiple models achieved similar recall values, XGBoost proved superior when evaluated using ROC-AUC and PR-AUC. The combination of strong ranking ability (ROC-AUC = 0.88) and focused minority performance (PR-AUC = 0.71) confirms that XGBoost provides the best overall performance and is the most reliable model for churn prediction.
-
----
-
-## ✈️ **2. Detailed Project Explanation**
-
-This section describes the end-to-end workflow followed in this project, from raw data to final model comparison.
-
-### 🥇 (i). Importing and Understanding the Dataset
-- Loaded the bank customer dataset containing features such as:
-  - Customer demographics (Age, Gender, Geography)
-  - Account information (Balance, Tenure, Number of Products, HasCrCard, IsActiveMember)
-  - Financial details (CreditScore, EstimatedSalary)
-  - Target variable: **Exited** (1 = churn, 0 = not churn)
-- Performed basic checks:
-  - Shape of the dataset  
-  - Data types of each column  
-  - Presence of null values and duplicates
-
----
-
-### 🧼 (ii). Data Cleaning
-
-- Handled missing values:
-  - Replaced null values in the `Surname` column using the mode (most frequent value).
-  - Replaced missing values in the `Age` column using the mean of the age distribution.
-
-- Standardized inconsistent categorical values:
-  - Converted `'FRA'` and `'French'` entries in the `Geography` column to `'France'` for consistency.
-
-- Cleaned numeric fields:
-  - Removed the `'€'` symbol from the `EstimatedSalary` column to ensure numerical formatting.
-
----
-
-### 📉 3. Outlier Detection & Handling
-
-- Visualized all numerical features using boxplots to detect potential outliers.  
-- Used the IQR (Interquartile Range) method along with list comprehension to isolate and display outlier values for review.  
-- Identified a few invalid entries in `EstimatedSalary` (negative values) and removed them to maintain data integrity.  
-- Plotted histograms for each numerical feature to understand their distributions and validate the impact of outlier removal.
-
----
-
-### 🔁 4. Feature Encoding & Preprocessing
-
-- Applied One-Hot Encoding on the `Geography` column using `pd.get_dummies`, while dropping the first dummy column to avoid the dummy variable trap and reduce multicollinearity.  
-- Converted binary categorical columns (`Gender`, `HasCrCard`, `IsActiveMember`) into numeric form using `LabelEncoder` for efficient model ingestion.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 🧹 **2. Data Cleaning & Preparation (Python)**
-
-### 🔧 **Key Cleaning Operations**
-- Removed duplicates  
-- Handled missing values  
-- Label encoding & one-hot encoding for categorical columns  
-- Numerical feature scaling using StandardScaler  
-- Saved intermediate cleaned datasets for reproducibility  
-
-### 📊 **Final Features Used**
-| Feature | Description |
-|---------|-------------|
-| CreditScore | Customer credit rating |
-| Age | Customer age |
-| Tenure | Years with bank |
-| Balance | Current account balance |
-| NumOfProducts | Number of bank products used |
-| HasCrCard | Credit card status |
-| IsActiveMember | Customer engagement |
-| Gender | Male/Female |
-| Geography | Country |
-| EstimatedSalary | Income level |
-
----
-
-## ⚖️ **3. Handling Class Imbalance**
-
-Dataset distribution:  
-- **80%** — Not churn (class 0)  
-- **20%** — Churn (class 1)  
-
-To avoid bias toward the majority class, applied:
-
-- Random Undersampling  
-- SMOTE  
-- ADASYN  
-- Class Weights  
-- XGBoost scale_pos_weight  
-
-Objective: improve recall of churners.
-
----
-
-## 🧠 **4. Machine Learning Models Used**
-
-Implemented and compared:
-
-- Logistic Regression  
-- Decision Tree  
-- Random Forest  
-- Gradient Boosting  
-- AdaBoost  
-- **XGBoost (best)**  
-
-Each with:
-- Base model  
-- SMOTE version  
-- ADASYN version  
-- Undersampling  
-- Class Weighting  
-
-Hyperparameter tuning applied using:
-- GridSearchCV(cv=5, scoring=[precision, recall, f1], refit='recall')
-- This ensures the models are optimized to **maximize recall for churn detection**, since retaining customers is more important than false positives.
 
 ---
 
@@ -878,17 +827,7 @@ Includes customer details and churn indicator:
 
 ---
 
-## 💡 **7. Key Insights From Analysis**
-
-✔ Customers with low activity & engagement churn more  
-✔ Higher number of products → reduced churn  
-✔ Salary alone is not a strong predictor  
-✔ Certain geographical regions have more churn tendency  
-✔ Middle-aged customers show higher churn patterns  
-
----
-
-## 🚀 **8. Future Enhancements**
+## 🚀 **7. Future Enhancements**
 
 - Add SHAP or LIME for interpretability  
 - Create Streamlit UI for model demo  
