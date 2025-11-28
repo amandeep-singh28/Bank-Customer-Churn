@@ -112,6 +112,23 @@ ADASYN further improves recall for Class 1 (0.75), but precision decreases sligh
 
 ---
 
+### (v) Logistic Regression + Class Weighting
+
+In this approach, instead of modifying the dataset, class weights were applied to penalize misclassification of the minority class. This instructs the model to treat churn cases (class 1) as more important during training.
+
+#### 📊 Classification Report (Logistic Regression + Class Weights)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.91 | 0.39 |
+| Recall | 0.72 | 0.71 |
+| F1-score | 0.80 | 0.51 |
+| Support | 2389 | 611 |
+
+This method performs similarly to SMOTE and ADASYN in terms of Class 1 recall, but without adding synthetic samples or removing original data. It provides a good balance between recall and data integrity, although precision for Class 1 remains moderate due to unavoidable false alarms.
+
+---
+
 ### 🧩 Conclusion for Logistic Regression
 
 Although Logistic Regression provides a simple and interpretable baseline model, its performance on this dataset remains limited due to the nonlinear relationships and strong class imbalance present in the target variable. Even after applying various imbalance handling techniques — such as undersampling, SMOTE, ADASYN, and class weighting — the model still struggled to consistently and reliably identify churners.
@@ -120,7 +137,7 @@ Therefore, Logistic Regression is not suitable as the final model choice for thi
 
 ---
 
-### (v) Decision Tree
+### (vi) Decision Tree
 
 A Decision Tree is a flowchart-like structure used for decision making and classification. Unlike Logistic Regression, Decision Trees can handle non-linear relationships between features. However, they also have a tendency to **overfit**, especially when the tree grows too deep and learns noise rather than patterns, leading to **low bias and high variance**.
 
@@ -151,11 +168,11 @@ Scoring metrics used during grid search:
 
 Grid search execution:
 
-`grid_search = GridSearchCV(estimator=pipe,`  
-`                           param_grid=param_grid,`  
-`                           cv=5,`  
-`                           scoring=scoring,`  
-`                           refit='recall'`  
+`grid_search = GridSearchCV(estimator = pipe,`  
+`                           param_grid = param_grid,`  
+`                           cv = 5,`  
+`                           scoring = scoring,`  
+`                           refit = 'recall'`  
 `)`
 
 
@@ -169,6 +186,91 @@ Grid search execution:
 | Support | 2389 | 611 |
 
 It is important to note that this base Decision Tree model was trained on the original imbalanced dataset, without any resampling or class weighting applied. This imbalance contributed to the weaker performance on the churn class, reinforcing the need for imbalance handling techniques and more robust ensemble models.
+
+---
+
+### (vii) Decision Tree + Undersampling
+
+Since undersampling was already demonstrated previously, the same approach was applied here using Decision Tree to check its impact on performance.
+
+#### 📊 Classification Report (Decision Tree + Undersampling)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.45 |
+| Recall | 0.77 | 0.74 |
+| F1-score | 0.84 | 0.56 |
+| Support | 2389 | 611 |
+
+With undersampling, the Decision Tree also shows a strong boost in recall for Class 1 (churn), improving from 0.53 (without sampling) to 0.74. However, the precision decreases for Class 1 due to more false positives, similar to the effect observed in the logistic regression undersampling approach.
+
+---
+
+### (viii) Decision Tree + SMOTE
+
+Applying SMOTE to Decision Tree allowed the model to train on a synthetically balanced dataset without losing original class 0 data. This helps the tree better capture churn patterns that were previously underrepresented.
+
+#### 📊 Classification Report (Decision Tree + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.91 | 0.40 |
+| Recall | 0.72 | 0.71 |
+| F1-score | 0.81 | 0.51 |
+| Support | 2389 | 611 |
+
+This configuration significantly improves the detection of churners while maintaining the benefit of using all original training data. Similar to the Logistic Regression + SMOTE case, recall for Class 1 improves, but precision decreases, indicating an increase in false positives for churn prediction.
+
+---
+
+### (ix) Decision Tree + ADASYN
+
+Using ADASYN with Decision Tree further emphasizes samples that are harder to classify by generating synthetic points in regions where the minority class is underrepresented. This helps the model better generalize on challenging churn cases.
+
+#### 📊 Classification Report (Decision Tree + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.46 |
+| Recall | 0.78 | 0.74 |
+| F1-score | 0.84 | 0.57 |
+| Support | 2389 | 611 |
+
+With ADASYN, the Decision Tree achieves a strong recall of 0.74 for the churn class, and shows better precision and F1 performance compared to SMOTE. This indicates that the model benefits from ADASYN’s adaptive oversampling approach in learning difficult churn patterns more effectively.
+
+---
+
+### (x) Decision Tree + Class Weighting
+
+Instead of modifying the dataset, class weights were applied to penalize misclassification of churn cases. This makes the model assign greater importance to minority class samples during training.
+
+#### 📊 Classification Report (Decision Tree + Class Weighting)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.46 |
+| Recall | 0.78 | 0.73 |
+| F1-score | 0.84 | 0.56 |
+| Support | 2389 | 611 |
+
+This approach delivers performance similar to ADASYN, achieving strong recall for churn cases while avoiding synthetic data generation. Class weighting gives the model a balanced focus without altering the dataset, maintaining data integrity with competitive prediction capability.
+
+---
+
+### 🧩 Conclusion for Decision Tree
+
+While the Decision Tree demonstrates meaningful improvement over Logistic Regression and captures nonlinear patterns, it is still prone to overfitting and limited generalization. Random Forest, being an ensemble of multiple decision trees, addresses this limitation by reducing variance and improving overall model stability. Therefore, Decision Tree alone is not selected as the final model choice.
+
+---
+
+### (x) Random Forest
+
+Random Forest is an ensemble learning method that builds multiple Decision Trees and combines their results to produce more stable and accurate predictions. It falls under the **bagging (bootstrap aggregating)** technique, where multiple models are trained in parallel on different random subsets of the data.
+
+This approach reduces overfitting by averaging results across many trees rather than relying on a single tree’s decision. In regression tasks, the final prediction is the mean of all tree outputs, and in binary classification, **majority voting** is used to determine the final class.
+ 
+
+
 
 
 
