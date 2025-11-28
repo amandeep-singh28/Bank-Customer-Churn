@@ -115,6 +115,10 @@ ADASYN further improves recall for Class 1 (0.75), but precision decreases sligh
 ### (v) Logistic Regression + Class Weighting
 
 In this approach, instead of modifying the dataset, class weights were applied to penalize misclassification of the minority class. This instructs the model to treat churn cases (class 1) as more important during training.
+`steps = [("preprocess", preprocessor),`  
+`         ("logistic_regression", LogisticRegression(random_state=42, class_weight='balanced'))]`
+
+
 
 #### 📊 Classification Report (Logistic Regression + Class Weights)
 
