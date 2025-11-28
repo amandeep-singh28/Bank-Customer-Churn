@@ -500,6 +500,27 @@ AdaBoost demonstrated strong precision for churn predictions and benefits from i
 
 Gradient Boosting builds trees sequentially, where each new tree attempts to correct the residual errors (the difference between actual and predicted values) made by the previous model. This method is theoretically more powerful than AdaBoost since it optimizes using gradients rather than reweighting samples.
 
+`param_grid = {`  
+`    'gradient_boost__n_estimators': [50, 100, 200, 300],`  
+`    'gradient_boost__learning_rate': [0.001, 0.01, 0.1, 1.0],`  
+`    "gradient_boost__max_depth": [1, 2, 3],`  
+`    "gradient_boost__subsample": [0.8, 1.0]`  
+`}`
+
+`scoring = {`  
+`    'accuracy': 'accuracy',`  
+`    'precision': 'precision',`  
+`    'recall': 'recall',`  
+`    'f1': 'f1'`  
+`}`
+
+`grid_search = GridSearchCV(estimator = pipe,`  
+`                           param_grid = param_grid,`  
+`                           scoring = scoring,`  
+`                           refit = 'recall',`  
+`                           cv = 5,`  
+`)`
+
 #### 📊 Classification Report (Gradient Boosting)
 
 | Metric | Class 0 (Not churn) | Class 1 (Churn) |
@@ -510,6 +531,9 @@ Gradient Boosting builds trees sequentially, where each new tree attempts to cor
 | Support | 2389 | 611 |
 
 While Gradient Boosting delivers high accuracy and strong performance on the majority class, the recall for churners remains relatively weak due to class imbalance. This indicates that without resampling or weighting strategies, Gradient Boosting gravitates toward learning the dominant class more effectively and struggles to capture minority-class churn patterns.
+
+(ii) In Gradient Boosting, parameters such as `max_depth` and `subsample` are tuned because this algorithm builds full decision trees as base learners and benefits from controlling tree complexity and sample proportions.  
+In contrast, AdaBoost relies on re-weighting the samples and works best with extremely simple weak learners (typically depth-1 stumps), where adding depth or subsampling is unnecessary and can even reduce the effectiveness of the boosting process.
 
 ---
 
@@ -571,6 +595,38 @@ XGBoost is an optimized and regularized version of Gradient Boosting that incorp
 - parallelized computation
 - improved missing value handling
 
+To deal with class imbalance, I calculated `scale_pos_weight`, which tells XGBoost how much more importance to give to minority class (churners):
+
+`pos = y_train.sum()`  
+`neg = len(y_train) - pos`  
+`scale_pos_weight = neg / pos`  
+`print("scale_pos_weight =", scale_pos_weight)`
+
+This helps XGBoost penalize misclassification of churn cases, improving recall for class 1.
+
+`param_grid = {`  
+`    'xgb__n_estimators': [100, 200, 300],`  
+`    'xgb__learning_rate': [0.01, 0.1, 0.2],`  
+`    'xgb__max_depth': [3, 4, 5],`  
+`    'xgb__subsample': [0.7, 0.8, 1.0],`  
+`    'xgb__colsample_bytree': [0.6, 0.8, 1.0]`  
+`}`
+
+`scoring = {`  
+`    'accuracy': 'accuracy',`  
+`    'precision': 'precision',`  
+`    'recall': 'recall',`  
+`    'f1': 'f1'`  
+`}`
+
+`grid_search = GridSearchCV(`  
+`    estimator = pipe,`  
+`    param_grid = param_grid,`  
+`    scoring = scoring,`  
+`    cv = 5,`  
+`    refit = 'recall'`  
+`)`
+
 It is widely known for being one of the most powerful models in tabular structured data.
 
 #### 📊 Classification Report (XGBoost)
@@ -583,6 +639,9 @@ It is widely known for being one of the most powerful models in tabular structur
 | Support | 2389 | 611 |
 
 XGBoost achieves a strong recall of **0.76** for churn cases — significantly better than the base models. This demonstrates that XGBoost is able to capture more minority class patterns while still maintaining high precision for non-churn predictions.
+
+(ii) Since XGBoost is a more advanced boosting algorithm than AdaBoost and Gradient Boosting, it supports tuning parameters such as `max_depth`, `subsample`, and `colsample_bytree`, which control tree complexity and feature sampling. This allows XGBoost to reduce overfitting and improve generalization — something not applicable to AdaBoost’s shallow stumps model architecture.
+
 
 ---
 
