@@ -684,6 +684,45 @@ XGBoost emerged as the best-performing model across all experiments due to its a
 
 ---
 
+## ⭐ **3.Final Validation Using ROC-AUC & PR-AUC**
+
+Since recall values across many models were somewhat similar, I used ROC-AUC and PR-AUC to further validate the model performance.
+
+**🔹 ROC-AUC answers the question:**  
+🎯 “How good is the model at ranking churners higher than non-churners?”
+
+- AUC = 0.5 → random guessing  
+- AUC = 1.0 → perfect ranking  
+
+A higher ROC-AUC score means the model can separate churn vs non-churn more effectively.
+
+**🔹 PR-AUC answers:**  
+🎯 “When the model predicts a HIGH probability of churn, how often is it correct?”
+
+This is more important for imbalanced datasets like ours (Exited ≈ 20%) because PR-AUC focuses specifically on minority class performance.
+
+---
+
+### 📊 XGBoost Final Scores
+
+| Metric | Value |
+|--------|-------|
+| ROC-AUC | **0.88** |
+| PR-AUC | **0.71** |
+
+These numbers confirm that:
+- The model has strong separation capability between churn and non-churn customers  
+- The model makes reliable high-confidence churn predictions  
+- The minority class detection (PR-AUC) is significantly better than other models  
+
+---
+
+### 🧩 Final Interpretation
+
+```md
+Even though multiple models achieved similar recall values, XGBoost proved superior when evaluated using ROC-AUC and PR-AUC. The combination of strong ranking ability (ROC-AUC = 0.88) and focused minority performance (PR-AUC = 0.71) confirms that XGBoost provides the best overall performance and is the most reliable model for churn prediction.
+
+---
 
 ## ✈️ **2. Detailed Project Explanation**
 
