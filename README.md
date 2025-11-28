@@ -114,7 +114,7 @@ ADASYN further improves recall for Class 1 (0.75), but precision decreases sligh
 
 ### (v) Logistic Regression + Class Weighting
 
-In this approach, instead of modifying the dataset, class weights were applied to penalize misclassification of the minority class. This instructs the model to treat churn cases (class 1) as more important during training.
+In this approach, instead of modifying the dataset, class weights were applied to penalize misclassification of the minority class. This instructs the model to treat churn cases (class 1) as more important during training.<br>
 `steps = [("preprocess", preprocessor),`  
 `         ("logistic_regression", LogisticRegression(random_state=42, class_weight='balanced'))]`
 
@@ -382,10 +382,241 @@ Here, instead of modifying the dataset, class weights were applied to penalize m
 
 Class weighting produces almost the same performance as SMOTE, achieving a good recall of 0.74 for churners without generating synthetic data or removing samples. This makes it an efficient approach that maintains dataset integrity while improving minority class detection.
 
+---
 
+### 🧩 Conclusion for Random Forest
 
+Random Forest demonstrates a strong improvement over the single Decision Tree model by reducing overfitting, improving overall stability, and achieving high recall for the churn class, especially with class weighting and ADASYN. However, while it performs reliably and provides balanced results, there is still room for improvement in capturing minority-class patterns. This motivated the exploration of more powerful sequential ensemble techniques such as Gradient Boosting and XGBoost, which can further optimize churn detection.
 
 ---
+
+### (xvi) Boosting Techniques
+Boosting is an ensemble method where models (weak learners) are built sequentially — each subsequent model focuses on correcting the errors made by the previous ones. Individually, these weak learners may not perform very well, but when combined, they form a strong and highly accurate predictive model.
+
+In this project, I implemented three boosting algorithms:
+- **AdaBoost (Adaptive Boosting)**
+- **Gradient Boosting**
+- **XGBoost (Extreme Gradient Boosting)**
+Below, I provide the detailed explanation and performance analysis of each boosting method used in this project.
+
+### (xvii) AdaBoost (Adaptive Boosting)
+
+AdaBoost works by iteratively training weak learners (typically shallow decision trees) and assigning higher weights to the samples that were misclassified in previous rounds. This forces subsequent models to focus increasingly on the difficult cases. Over successive iterations, these weighted weak learners combine to form a strong classifier.
+
+To tune AdaBoost, I used `GridSearchCV` with the following hyperparameter grid:
+
+`param_grid = {`  
+`    'ada_boost__n_estimators': [50, 100, 200, 300],`  
+`    'ada_boost__learning_rate': [0.001, 0.01, 0.1, 1.0]`  
+`}`
+
+Performance metrics used during grid search:
+
+`scoring = {`  
+`    'accuracy': 'accuracy',`  
+`    'precision': 'precision',`  
+`    'recall': 'recall',`  
+`    'f1': 'f1'`  
+`}`
+
+Grid search execution:
+
+`grid_search = GridSearchCV(estimator = pipe,`  
+`                           param_grid = param_grid,`  
+`                           scoring = scoring,`  
+`                           refit = 'recall',`  
+`                           cv = 5,`  
+`)`
+
+#### 📊 Classification Report (AdaBoost)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.88 | 0.75 |
+| Recall | 0.96 | 0.49 |
+| F1-score | 0.92 | 0.60 |
+| Support | 2389 | 611 |
+
+AdaBoost achieves very high precision for the churn class, meaning that when it predicts churn, it is often correct. However, its recall for churn (0.49) is significantly lower than other models, indicating that it fails to identify a substantial number of customers who are likely to leave.
+
+---
+
+### (xviii) AdaBoost (Varying Base Estimator Depth)
+
+Since AdaBoost commonly performs best with very shallow decision trees (decision stumps), I experimented with varying the depth of the base estimator from 1 to 6. The observation from this experiment was that as the depth increased, the model started overfitting — learning the majority class too strongly and failing to generalize to the minority class (churners). This resulted in consistently weaker performance for class 1 with deeper trees.
+
+For a detailed view of how metrics changed across different depths, refer to the model comparison report.
+
+---
+
+### (xix) AdaBoost + SMOTE
+
+Since AdaBoost on its own does not perform well on imbalanced data, applying SMOTE helped balance the dataset by generating synthetic samples for the churn class, resulting in improved performance for Class 1.
+
+#### 📊 Classification Report (AdaBoost + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.52 |
+| Recall | 0.82 | 0.74 |
+| F1-score | 0.87 | 0.61 |
+| Support | 2389 | 611 |
+
+This configuration significantly boosts recall for churners (0.74) compared to base AdaBoost (0.49), demonstrating that SMOTE helps AdaBoost better capture minority class patterns. However, the precision for churn remains moderate due to an increase in false positives, which is an expected trade-off when using oversampling techniques.
+
+---
+
+### (xx) AdaBoost + ADASYN
+
+Using ADASYN emphasizes difficult-to-learn minority samples by generating synthetic churn examples in regions where class 1 is underrepresented. This allows AdaBoost to focus more on challenging churn cases during training.
+
+#### 📊 Classification Report (AdaBoost + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.46 |
+| Recall | 0.77 | 0.76 |
+| F1-score | 0.84 | 0.57 |
+| Support | 2389 | 611 |
+
+Compared to SMOTE, ADASYN provides a similar improvement in churn recall (0.76), but slightly lower precision for the minority class. This indicates that ADASYN helps AdaBoost detect more churners, but also results in increased false churn predictions.
+
+---
+
+### 🧩 Conclusion for AdaBoost
+
+AdaBoost demonstrated strong precision for churn predictions and benefits from its focus on misclassified samples. However, in its base form, it struggled with recall for the churn class due to dataset imbalance. Even after applying SMOTE and ADASYN, while recall improved significantly, the increase in false positives reduced its overall reliability. Therefore, although AdaBoost is effective, it does not provide the most optimal balance between recall, precision, and generalization for this churn prediction task.
+
+---
+
+### (xxi) Gradient Boosting
+
+Gradient Boosting builds trees sequentially, where each new tree attempts to correct the residual errors (the difference between actual and predicted values) made by the previous model. This method is theoretically more powerful than AdaBoost since it optimizes using gradients rather than reweighting samples.
+
+#### 📊 Classification Report (Gradient Boosting)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.88 | 0.61 |
+| Recall | 0.92 | 0.51 |
+| F1-score | 0.90 | 0.56 |
+| Support | 2389 | 611 |
+
+While Gradient Boosting delivers high accuracy and strong performance on the majority class, the recall for churners remains relatively weak due to class imbalance. This indicates that without resampling or weighting strategies, Gradient Boosting gravitates toward learning the dominant class more effectively and struggles to capture minority-class churn patterns.
+
+---
+
+### (xxii) Gradient Boosting + SMOTE
+
+Applying SMOTE with Gradient Boosting helped balance the dataset by generating synthetic samples for minority class 1, allowing the model to better learn churn-related patterns.
+
+#### 📊 Classification Report (Gradient Boosting + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.92 | 0.51 |
+| Recall | 0.82 | 0.73 |
+| F1-score | 0.87 | 0.60 |
+| Support | 2389 | 611 |
+
+With SMOTE, Gradient Boosting shows a significant improvement in recall for churn (0.73 vs. 0.51 in base model). This indicates that oversampling helps the model identify a larger proportion of churners. However, precision for churn remains moderate, and performance still trails behind Random Forest and XGBoost approaches.
+
+---
+
+### (xxiii) Gradient Boosting + ADASYN
+
+#### 📊 Classification Report (Gradient Boosting + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.00 | 0.20 |
+| Recall | 0.00 | 1.00 |
+| F1-score | 0.00 | 0.34 |
+| Support | 2389 | 611 |
+
+In this scenario, the model predicted **every single sample** as churn (Class 1), resulting in:
+- Recall = **1.00** for churn (it found all churners)
+- But precision = **0.20** (because most of those predictions were incorrect)
+- And recall = **0.00** for non-churn (because it didn’t predict a single class 0 instance)
+
+This led to a total accuracy of only **20%**, meaning 80% of the predictions were wrong.
+
+When ADASYN oversampled the minority class, it generated many synthetic churn points, especially around the decision boundaries. This shifted the dataset distribution heavily toward class 1. 
+
+Gradient Boosting optimizes residual errors during training, and due to this imbalance, the residual gradient updates became biased toward correctly predicting churn. Eventually, the model converged to a trivial solution of predicting everything as churn to minimize loss — resulting in a collapsed classifier.
+
+---
+
+### 🧩 Conclusion for Gradient Boosting
+
+Gradient Boosting demonstrated strong capability in modeling complex relationships and delivered high accuracy for the majority class. However, its performance on the minority churn class remained limited in the base form due to imbalance sensitivity. Even after applying SMOTE and ADASYN, the model either improved recall modestly or, in the case of ADASYN, collapsed into predicting all samples as churn. Overall, Gradient Boosting did not provide the most stable or reliable performance for churn detection when compared to Random Forest and XGBoost.
+
+---
+
+### (xxiv) XGBoost (Extreme Gradient Boosting)
+
+XGBoost is an optimized and regularized version of Gradient Boosting that incorporates advanced features such as:
+- L1 and L2 regularization (reduces overfitting)
+- optimized tree splitting
+- handling sparse data efficiently
+- parallelized computation
+- improved missing value handling
+
+It is widely known for being one of the most powerful models in tabular structured data.
+
+#### 📊 Classification Report (XGBoost)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.50 |
+| Recall | 0.80 | 0.76 |
+| F1-score | 0.86 | 0.60 |
+| Support | 2389 | 611 |
+
+XGBoost achieves a strong recall of **0.76** for churn cases — significantly better than the base models. This demonstrates that XGBoost is able to capture more minority class patterns while still maintaining high precision for non-churn predictions.
+
+---
+
+### (xxv) XGBoost + SMOTE
+
+Applying SMOTE with XGBoost generates synthetic samples for churn cases and helps reduce the class imbalance while still leveraging XGBoost’s strong regularization and tree optimization capabilities.
+
+#### 📊 Classification Report (XGBoost + SMOTE)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.53 |
+| Recall | 0.84 | 0.73 |
+| F1-score | 0.88 | 0.62 |
+| Support | 2389 | 611 |
+
+XGBoost combined with SMOTE achieves stronger recall for churn (0.73) and improves overall model balance, resulting in higher accuracy (0.82). SMOTE helps XGBoost capture more churn cases than the base XGBoost, although it slightly impacts precision due to more aggressive positive predictions. Overall, this combination delivers one of the best trade-offs between recall and precision among all tested models.
+
+---
+
+### (xxvi) XGBoost + ADASYN
+
+Using ADASYN, additional synthetic minority samples were generated, especially for harder-to-classify churn cases. This allows XGBoost to learn more subtle churn patterns near the decision boundary.
+
+#### 📊 Classification Report (XGBoost + ADASYN)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.93 | 0.47 |
+| Recall | 0.78 | 0.76 |
+| F1-score | 0.85 | 0.58 |
+| Support | 2389 | 611 |
+
+ADASYN increases the recall of churn detection to **0.76**, matching the trend seen with other oversampling techniques. However, precision for churn decreases to **0.47**, indicating that the model flags more customers as churn incorrectly. This is a typical trade-off seen when aggressively expanding the minority class using adaptive oversampling.
+
+---
+
+### 🧩 Conclusion for XGBoost
+
+XGBoost emerged as the best-performing model across all experiments due to its ability to generalize well, handle complex nonlinear relationships, and maintain stability even under sampling-based imbalance corrections. It consistently delivered high recall for the churn class while preserving strong precision for non-churn predictions, making it a highly reliable model for identifying at-risk customers. Considering both performance metrics and real-world usability, XGBoost provides the most balanced and effective solution for churn prediction in this project.
+
+
+
 
 ## ✈️ **2. Detailed Project Explanation**
 
