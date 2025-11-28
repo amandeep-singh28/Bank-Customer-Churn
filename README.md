@@ -51,7 +51,7 @@ To verify this, I examined the distribution of the target variable `Exited`, whi
 
 ### (ii) Logistic Regression + Undersampling Approach
 
-To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.
+To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.<br>
 `from imblearn.under_sampling import RandomUnderSampler`  
 `steps = [("preprocess", preprocessor),`  
 `         ("undersampling", RandomUnderSampler(random_state=42)),`  
@@ -73,7 +73,7 @@ It can be observed that the recall value for Class 1 increased significantly (fr
 
 ### (iii) Logistic Regression + SMOTE
 
-SMOTE (Synthetic Minority Oversampling Technique) is an oversampling method that generates new synthetic samples for the minority class rather than simply duplicating existing records. It does this by interpolating between neighboring minority class samples using the K-Nearest Neighbours approach. This allows the model to learn more generalized minority patterns and typically performs better than both random oversampling and undersampling.
+SMOTE (Synthetic Minority Oversampling Technique) is an oversampling method that generates new synthetic samples for the minority class rather than simply duplicating existing records. It does this by interpolating between neighboring minority class samples using the K-Nearest Neighbours approach. This allows the model to learn more generalized minority patterns and typically performs better than both random oversampling and undersampling.<br>
 `from imblearn.over_sampling import SMOTE`  
 `steps = [("preprocess", preprocessor),`  
 `         ("smote", SMOTE(random_state=42)),`  
@@ -94,7 +94,7 @@ Compared to undersampling, SMOTE retains all original data and generates artific
 
 ### (iv) Logistic Regression + ADASYN
 
-ADASYN (Adaptive Synthetic Sampling) is similar to SMOTE, but instead of generating an equal number of synthetic samples around each minority instance, it focuses on generating more samples for minority points that are harder to learn — specifically those located in regions dominated by the majority class. This makes the model pay more attention to difficult minority examples.
+ADASYN (Adaptive Synthetic Sampling) is similar to SMOTE, but instead of generating an equal number of synthetic samples around each minority instance, it focuses on generating more samples for minority points that are harder to learn — specifically those located in regions dominated by the majority class. This makes the model pay more attention to difficult minority examples.<br>
 `from imblearn.over_sampling import ADASYN`  
 `steps = [("preprocess", preprocessor),`  
 `         ("adasyn" ADASYN(random_state=42)),`  
