@@ -47,6 +47,26 @@ To verify this, I examined the distribution of the target variable `Exited`, whi
 | 0 (Not churn) | 7960 |
 | 1 (Churn) | 2037 |
 
+---
+
+### (ii) Logistic Regression + Undersampling Approach
+
+To address the class imbalance, I applied **Random Undersampling**, which reduces the majority class by randomly removing samples to balance both classes. However, this approach may also discard useful data from the majority class, potentially affecting overall performance.
+
+#### 📊 Classification Report (Logistic Regression + Undersampling)
+
+| Metric | Class 0 (Not churn) | Class 1 (Churn) |
+|--------|-------------------|----------------|
+| Precision | 0.91 | 0.40 |
+| Recall | 0.73 | 0.72 |
+| F1-score | 0.81 | 0.52 |
+| Support | 2389 | 611 |
+
+It can be observed that the recall value for Class 1 increased significantly (from 0.21 to 0.72), meaning the model is now better at catching churners. However, precision for Class 1 decreased, indicating more false churn predictions. This tradeoff is expected with undersampling since valuable data from Class 0 is removed.
+
+---
+
+### (iii) Logistic Regression + SMOTE
 
 
 
