@@ -130,13 +130,13 @@ To achieve this, I used `GridSearchCV`, which helps in finding the best combinat
 
 The parameter grid used:
 
-`param_grid = {
-    'decision_tree__criterion': ['gini', 'entropy'],
-    'decision_tree__splitter': ['best', 'random'],
-    'decision_tree__max_depth': [None, 10, 20, 30],
-    'decision_tree__min_samples_split': [2, 5, 10],
-    'decision_tree__min_samples_leaf': [1, 2, 4]
-}`
+`param_grid = {`
+`    'decision_tree__criterion': ['gini', 'entropy'],`
+`    'decision_tree__splitter': ['best', 'random'],`
+`    'decision_tree__max_depth': [None, 10, 20, 30],`
+`    'decision_tree__min_samples_split': [2, 5, 10],`
+`    'decision_tree__min_samples_leaf': [1, 2, 4]`
+`}`
 
 Scoring metrics used during grid search:
 
